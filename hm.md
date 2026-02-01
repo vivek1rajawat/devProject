@@ -2,3 +2,8 @@
 - difference between caret and tilde
 - what are dependecies 
 - use of "-g" while npm install
+- GET, POST, PATCH, DELETE API calls 
+-Explore routing and use of ?, *, (), *
+- Use of regex in routes /a/, /.*fly$/
+- Reading the query params in the routes
+- Reading the dynamic routes
