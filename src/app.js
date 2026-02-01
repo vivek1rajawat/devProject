@@ -1,15 +1,18 @@
 const express = require('express');
 const app = express();
 
-app.use("/user",(req,res,next)=>{
-    console.log("handling the route  user1")
-   
-    next();
-     res.send("Response 1")
-},
-(req,res)=>{
-    console.log("handling the route user2")
-    res.send("Response 2")
+const {adminAuth} = require("./middlewares/auth")
+
+app.use("/admin",adminAuth)
+
+app.get("/admin/getAllData",(req,res)=>{
+    //check if the reques is authorized
+    res.send("All data sent")
+    
+})
+
+app.get("/admin/deleteData",(req,res)=>{
+   res.send("delete")
 })
 
 app.listen(3000,()=>{
