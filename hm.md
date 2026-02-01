@@ -1,0 +1,4 @@
+-node modules, package.json, package-lock.json
+- difference between caret and tilde
+- what are dependecies 
+- use of "-g" while npm install
