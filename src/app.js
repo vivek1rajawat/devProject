@@ -1,18 +1,19 @@
 const express = require('express');
 const app = express();
 
-const {adminAuth} = require("./middlewares/auth")
-
-app.use("/admin",adminAuth)
-
-app.get("/admin/getAllData",(req,res)=>{
-    //check if the reques is authorized
-    res.send("All data sent")
+app.get("/getUserData",(req,res)=>{
     
-})
+    try {   
+        res.send("User data sent")
+    } catch (err){
+        res.status(500).send("something went wrong contact team");
 
-app.get("/admin/deleteData",(req,res)=>{
-   res.send("delete")
+    }
+})
+app.use("/",(err,req,res,next)=>{
+    if (err){
+        res.status(500).send("something went wrong");
+    }
 })
 
 app.listen(3000,()=>{
