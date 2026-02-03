@@ -19,7 +19,7 @@ app.get("/user", async (req,res)=>{
         res.status(400).send("something went wrong")
     }
 })
-
+ 
 
 //Get all the user from the feed
 
@@ -63,15 +63,28 @@ app.delete("/user", async (req,res)=>{
 })
 
 //update data of the user
-app.patch("/user", async (req,res)=>{
-    const userId = req.body.userId;
+app.patch("/user/:userId", async (req,res)=>{
+    const userId = req.params?.userId;
     const data = req.body
+
+    
     try{
-        const user = await User.findByIdAndUpdate({_id: userId},data);
+        const ALLOWED_UPDATES = [ "photoUrl", "about", "gender", "age", "skills"]
+
+        const isUpdateAllowed = Object.keys(data).every((k)=> 
+        ALLOWED_UPDATES.includes(k)
+    );
+    if(!isUpdateAllowed){
+        throw new Error("Update not allowed")
+    }
+    if(data?.skills.length > 10){
+        throw new Error ("skills cannot be more than 10");
+    }
+        const user = await User.findByIdAndUpdate({_id: userId},data, {runValidators:true})
         res.send("user updated successfully")
 
     } catch (err) {
-        res.status(404).send("something went wrong")
+        res.status(404).send("something went wrong" + err.message)
     }
 })
 
