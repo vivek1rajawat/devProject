@@ -9,3 +9,4 @@
 - Reading the dynamic routes
 - What is middlewares
 - How express js handles request behind the  scenes
+- diff between js object and json object
