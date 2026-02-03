@@ -1,11 +1,15 @@
 const express = require('express');
 const connectDB =  require("./config/database")
 const User = require("./models/user")
+const {validateSignUpData} = require('./utils/validation')
+const bcrypt = require('bcrypt');
+
+
 
 const app = express();
 
 app.use(express.json());
-//Get user by email
+//Get user by email  
 app.get("/user", async (req,res)=>{
     const userEmail = req.body.emailId;
     try{
@@ -32,24 +36,48 @@ app.get("/feed", async (req,res)=>{
     }
 })
 app.post("/signup",async (req,res)=>{ 
-    // console.log(req.body)
-
-    // const userObj = {
-    //     firstName: "Kajal",
-    //     lastName: "Tomar",
-    //     emailId: "kajaltomar2005@gmail.com",
-    //     password: "kajal123",
-    
-    // }
-    const user = new User(req.body)
+    //validation of data
     try {
+    validateSignUpData(req);
+    //encrypt the password
+    const {firstName, lastName, emailId, password} = req.body;
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const user = new User({
+        firstName,
+        lastName,
+        emailId,
+        password: passwordHash,
+    });
+    
         await user.save();
     res.send("user added successfully")
     } catch(err){
-        res.status(400).send("something went wrong")
+        res.status(400).send("something went wrong " + err.message)
     }
     
 });
+
+//login api
+app.post("/login", async (req,res)=>{
+    try{
+    const {emailId, password} = req.body;
+    const user  = await findOne({emailId: emailId});
+    if(!user){
+        throw new  Error("Invalid credential");
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if(isPasswordValid){
+        res.send("Login successfully");
+
+    }
+    else{
+        throw new Error("Password is not correct")
+    }
+    } catch (err){
+        res.status(404).send("something went wrong " + err.message)
+    }
+})
 
 //delete a user from the database
 app.delete("/user", async (req,res)=>{
